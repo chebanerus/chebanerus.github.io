@@ -6,7 +6,7 @@
     <script src="pdf-lib.js"></script>
 </head>
 <body onload="updateBelege()">
-<form class="form-style-1" aria-label="Refundierungsformular-1">
+<form class="form-style-1" aria-label="Refundierungsformular-1" id = "form-full">
     <div class="form-group">
         <label for="582">Grund/Zweck der Refundierung <span class="required" aria-hidden="true">*</span></label>
         <div class="582">
@@ -346,6 +346,7 @@
         var titel = document.getElementById("582");
         const pdfBytes = await pdfDoc.save();
         saveByteArray("Refundierung_"+nachname.value.replaceAll(" ", "_")+"_"+titel.value.replaceAll(" ", "_")+".pdf", pdfBytes);
+        document.getElementById("form-full").submit();
     }
 </script>
 
