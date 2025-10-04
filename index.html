@@ -177,7 +177,7 @@
         function uploadZB(indeks){
             var selector = document.getElementById("Belege");
             var nbelege = selector.value;
-            var cb = document.getElementById("checkboxes");
+            var cb = document.getElementById("checkboxes/"+indeks);
             cb.innerHTML = "Gültig für Beleg(e):";
             for (var i = 1; i <= nbelege; i++) {
                 cb.innerHTML+=i+'<input type="checkbox" value="'+i+'" id ='+indeks+"/check/"+i+'> '
@@ -220,7 +220,7 @@
             index += 1;
             return ('<div class="form-group">'+
                 '<label for="'+(index+"/ZB")+'">Auswahl Zahlungsbestätigung '+index+'<span class="required" aria-hidden="true">*</span></label>'+
-                '<input type="file" accept=".pdf,.jpeg,.jpg,.png" id="'+(index+"/ZB")+'" value="Upload Zahlungsbestätigung" class="field-divided" aria-required="true" onclick="uploadZB('+index+')"><div class="form-group" id="checkboxes"></div>'+
+                '<input type="file" accept=".pdf,.jpeg,.jpg,.png" id="'+(index+"/ZB")+'" value="Upload Zahlungsbestätigung" class="field-divided" aria-required="true" onclick="uploadZB('+index+')"><div class="form-group" id="checkboxes'+"/"+index+'"></div>'+
                 '</div>');
         }
     </script>
