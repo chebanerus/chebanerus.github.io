@@ -346,7 +346,7 @@
         var titel = document.getElementById("582");
         const pdfBytes = await pdfDoc.save();
         saveByteArray("Refundierung_"+nachname.value.replaceAll(" ", "_")+"_"+titel.value.replaceAll(" ", "_")+".pdf", pdfBytes);
-        document.getElementById("form-full").submit();
+        document.getElementById("form-full").requestSubmit();
     }
 </script>
 
