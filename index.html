@@ -5,7 +5,7 @@
     <title>Formular-Ausfüllhilfe V1.1</title>
     <script src="pdf-lib.js"></script>
 </head>
-<body onload="updateBelege()">
+<body onload="updateBelege();updateZB()">
 <form class="form-style-1" aria-label="Refundierungsformular-1" id = "form-full">
     <div class="form-group">
         <label for="582">Grund/Zweck der Refundierung <span class="required" aria-hidden="true">*</span></label>
@@ -175,9 +175,15 @@
             console.log(indeks);
         }
         function uploadZB(indeks){
-            console.log(indeks);
+            var selector = document.getElementById("Belege");
+            var nbelege = selector.value;
+            var cb = document.getElementById("checkboxes");
+            cb.innerHTML = "Gültig für Beleg(e):";
+            for (var i = 1; i <= nbelege; i++) {
+                cb.innerHTML+=i+'<input type="checkbox" value="'+i+'" id ='+indeks+"/check/"+i+'> '
+            }
         }
-        function generateHTML(index){
+        function generateBelege(index){
             let curnum = 604+6*index;
             index +=1;
             return ('<div class="form-group">'+
@@ -189,8 +195,6 @@
                 '<span class = "validity"></span>'+
                 '<label for="'+(index+"/Ticket")+'">Auswahl Ticket<span class="required" aria-hidden="true">*</span></label>'+
                 '<input type="file" accept=".pdf,.jpeg,.jpg,.png" id="'+(index+"/Ticket")+'"  value="Upload Ticket" class="field-divided" aria-required="true" onclick="uploadTicket('+index+')">' +
-                '<label for="'+(index+"/ZB")+'">Auswahl Zahlungsbestätigung<span class="required" aria-hidden="true">*</span></label>'+
-                '<input type="file" accept=".pdf,.jpeg,.jpg,.png" id="'+(index+"/ZB")+'" value="Upload Zahlungsbestätigung" class="field-divided" aria-required="true" onclick="uploadZB('+index+')">'+
                 '</div>');
         }
         function updateBelege() {
@@ -199,10 +203,46 @@
             var belege = document.getElementById("Belege-Selectors");
             belege.innerHTML = "";
             for (var i = 0; i < nbelege; i++) {
-                belege.innerHTML += generateHTML(i);
+                belege.innerHTML += generateBelege(i);
             }
         }
+        function updateZB() {
+            var selector = document.getElementById("Zahlungsbestätigungen");
+            var nzbs = selector.value;
+            var zbs = document.getElementById("ZB-Selectors");
+            zbs.innerHTML = "";
+            for (var i = 0; i < nzbs; i++) {
+                zbs.innerHTML += generateZB(i);
+            }
+        }
+
+        function generateZB(index) {
+            index += 1;
+            return ('<div class="form-group">'+
+                '<label for="'+(index+"/ZB")+'">Auswahl Zahlungsbestätigung '+index+'<span class="required" aria-hidden="true">*</span></label>'+
+                '<input type="file" accept=".pdf,.jpeg,.jpg,.png" id="'+(index+"/ZB")+'" value="Upload Zahlungsbestätigung" class="field-divided" aria-required="true" onclick="uploadZB('+index+')"><div class="form-group" id="checkboxes"></div>'+
+                '</div>');
+        }
     </script>
+    <br>
+    <div class="form-group">
+        <label for="Zahlungsbestätigungen">Anzahl Zahlungsbestätigungen</label>
+        <select id="Zahlungsbestätigungen"  aria-describedby="Belege-ANZ" oninput="updateZB()">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+        </select>
+        <span id="Zahlungsbestätigungen-ANZ" class="sr-only">Wähle die Anzahl an Zahlungsbestätigungen aus!</span>
+    </div>
+    <div class="form-group" id="ZB-Selectors">
+
+    </div>
     <!--<div class="form-group">
         <label for="message">Your Message <span class="required" aria-hidden="true">*</span></label>
         <textarea id="message" name="message" placeholder="Type your message here..." aria-required="true"></textarea>
@@ -267,22 +307,10 @@
     }
 
     async function downloadFinalForm() {
-
         var formUrl = 'https://syncandshare.lrz.de/dl/fi3shG7WWYsd2rj15Gnfv9/refund.pdf?inline&skipCounter=true';
         var formUrl = 'refund.pdf';
         const formPdfBytes = await fetch(formUrl).then(res => res.arrayBuffer())
-        //const formPdfBytes = readFileSync(formUrl);
-        //const marioUrl = 'https://pdf-lib.js.org/assets/small_mario.png'
-        //const marioImageBytes = await fetch(marioUrl).then(res => res.arrayBuffer())
-
-        //const emblemUrl = 'https://pdf-lib.js.org/assets/mario_emblem.png'
-        //const emblemImageBytes = await fetch(emblemUrl).then(res => res.arrayBuffer())
-
         const pdfDoc = await PDFLib.PDFDocument.load(formPdfBytes)
-
-        //const marioImage = await pdfDoc.embedPng(marioImageBytes)
-        //const emblemImage = await pdfDoc.embedPng(emblemImageBytes)
-
         const form = pdfDoc.getForm()
         var refs = {};
         for(let i = 0; i< form.getFields().length; i++){
@@ -309,12 +337,12 @@
             console.log(currobj);
         }
         let numofBelege = document.getElementById("Belege").value
+        let numofZB = document.getElementById("Zahlungsbestätigungen").value
         //const newdoc = await PDFLib.PDFDocument.create();
         const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
 
         for(let i = 1; i <= numofBelege; i++) {
             const ticket = await document.getElementById((i+"/Ticket")).files[0];
-            const zahlungsbeleg = await document.getElementById(i+("/ZB")).files[0];
             //console.log(ticket);
             //console.log(zahlungsbeleg);
             const page = pdfDoc.addPage();
@@ -328,9 +356,23 @@
                 font: helvetica,
                 color: PDFLib.rgb(1,0,0),
             })
+
+        }
+        for(let i = 1; i <= numofZB; i++){
+            const zahlungsbeleg = await document.getElementById(i+("/ZB")).files[0];
             const page2 = pdfDoc.addPage();
+            const {width, height} = page2.getSize();
+            const fontSize = 20
             await embedPicOrPdf(zahlungsbeleg, pdfDoc, page2);
-            page2.drawText("Zahlungsbeleg " + i+":", {
+            var text = ""
+            for(let j = 1; j<=numofBelege; j++){
+                var checkbox = document.getElementById(i+"/check/"+j);
+                if(checkbox.checked){
+                    text+=(j+",")
+                }
+            }
+            text = text.substring(0,text.length-1);
+            page2.drawText("Zahlungsbeleg für Belege " + text +":", {
                 x: 10,
                 y: height-20,
                 size: fontSize,
