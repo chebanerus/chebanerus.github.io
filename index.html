@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Formular-Ausfüllhilfe V1.0</title>
+    <script src="pdf-lib.js"></script>
+</head>
+<body onload="updateBelege()">
+<form class="form-style-1" aria-label="Refundierungsformular-1">
+    <div class="form-group">
+        <label for="582">Grund/Zweck der Refundierung <span class="required" aria-hidden="true">*</span></label>
+        <div class="582">
+            <input type="text" id="582" class="field-divided" placeholder="Seminar" aria-required="true" >
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="586">Anrede/Titel <span class="" aria-hidden="true"></span></label>
+        <input type="text" id="586" class="field-divided" placeholder="" aria-required="false">
+    </div>
+    <div class="form-group">
+        <label for="589">Vorname <span class="required" aria-hidden="true">*</span></label>
+        <input type="text" id="589" class="field-divided" placeholder="" aria-required="true" oninput = updateForm()>
+    </div>
+    <div class="form-group">
+        <label for="591">Nachname <span class="required" aria-hidden="true">*</span></label>
+        <input type="text" id="591"  class="field-divided" placeholder="" aria-required="true" oninput = updateForm()>
+        <input type="hidden" id="658">
+        <input type="hidden" id="659">
+    </div>
+    <div class="form-group">
+        <input type="hidden" id = "594" value="">
+        <script>
+            function updateHausnr(){
+                var Strasse = document.getElementById("594/1");
+                var Hausnr = document.getElementById("594/2");
+                var comb = document.getElementById("594");
+                comb.value = Strasse.value + ", " + Hausnr.value;
+                //console.log(comb.value);
+            }
+        </script>
+        <label for="594/1">Adresse <span class="required" aria-hidden="true">*</span></label>
+        <div class="594">
+            <input type="text" id="594/1"  class="field-divided"  aria-required="true" placeholder="Straße" oninput="updateHausnr()">
+            <input type="text" id="594/2"  class="field-divided"  aria-required="true" placeholder="Hausnr." oninput="updateHausnr()">
+        </div>
+        <br>
+        <div class = "595/596">
+            <input type="text" id="595" class="field-divided"  aria-required="true" placeholder="PLZ">
+            <input type="text" id="596"  class="field-divided"  aria-required="true" placeholder="Ort">
+        </div>
+        <br>
+        <div class = "597">
+            <input type="text" id="597"  class="field-divided"  aria-required="true" placeholder="Land">
+        </div>
+    </div>
+    <div class="form-group">
+        <input type="hidden" id = "598" value="">
+    </div>
+    <div class="form-group">
+        <label for="598/1">Kontoinhaber*in identisch mit Name <span class="required" aria-hidden="true"></span></label>
+        <input type="checkbox" id="598/1" placeholder="" checked = "checked" onclick="updateForm()" style="align-self: auto;">
+    </div>
+    <div class="form-group" id = "598-class" hidden="hidden">
+        <label for="598/2">Kontoinhaber*in <span class="required" aria-hidden="true">*</span></label>
+        <input type="text" class = "field-divided" id="598/2" placeholder="" aria-required="false" oninput="updateForm()" style="align-self: auto;">
+    </div>
+    <script>
+        function updateForm() {
+            var valuElem = document.getElementById("598");
+            var checkBox = document.getElementById("598/1");
+            var input_field = document.getElementById("598-class");
+            var input_class = document.getElementById("598/2");
+            var vorname = document.getElementById("589");
+            var nachname = document.getElementById("591");
+            var Datum = document.getElementById("658");
+            var VNZN = document.getElementById("659");
+            Datum.value = new Date().toLocaleDateString("de-DE");
+            VNZN.value = vorname.value+ ", " + nachname.value;
+            if (checkBox.checked !== true) {
+                input_field.hidden = false;
+                input_class.ariaRequired = true;
+                valuElem.value = input_class.value;
+            }else{
+                input_field.hidden = true;
+                input_class.ariaRequired = false;
+                valuElem.value = vorname.value+" " + nachname.value;
+            }
+        }
+    </script>
+    <div class="form-group">
+        <label for="599">Name der Bank<span class="required" aria-hidden="true">*</span></label>
+        <input type="text" id="599" class="field-divided" placeholder="" aria-required="true">
+    </div>
+    <div class="form-group">
+        <label id = "600 lbl" for="600">IBAN<span class="required" aria-hidden="true">*</span></label>
+        <input type="text" id="600" class="field-divided" placeholder="" aria-required="true" oninput="isValidIBAN()">
+        <br>
+        <p style="color: red" id = "iban_valid"></p>
+    </div>
+    <div class="form-group">
+        <label for="601">BIC<span class="required" aria-hidden="true">*</span></label>
+        <input type="text" id="601" class="field-divided" placeholder="" aria-required="true">
+    </div>
+
+    <script>
+        function isValidIBAN(){
+            var input_field = document.getElementById("600");
+            //console.log(input_field);
+            var lbl = document.getElementById("iban_valid");
+            let res = isValidIBANNumber(input_field.value);
+            console.log(input_field.value);
+            if(res !== true){
+                lbl.textContent="IBAN UNGÜLTIG!"
+            }else{
+                lbl.textContent = ""
+            }
+        }
+
+        function isValidIBANNumber(input) {
+            var CODE_LENGTHS = {
+                AD: 24, AE: 23, AT: 20, AZ: 28, BA: 20, BE: 16, BG: 22, BH: 22, BR: 29,
+                CH: 21, CR: 21, CY: 28, CZ: 24, DE: 22, DK: 18, DO: 28, EE: 20, ES: 24,
+                FI: 18, FO: 18, FR: 27, GB: 22, GI: 23, GL: 18, GR: 27, GT: 28, HR: 21,
+                HU: 28, IE: 22, IL: 23, IS: 26, IT: 27, JO: 30, KW: 30, KZ: 20, LB: 28,
+                LI: 21, LT: 20, LU: 20, LV: 21, MC: 27, MD: 24, ME: 22, MK: 19, MR: 27,
+                MT: 31, MU: 30, NL: 18, NO: 15, PK: 24, PL: 28, PS: 29, PT: 25, QA: 29,
+                RO: 24, RS: 22, SA: 24, SE: 24, SI: 19, SK: 24, SM: 27, TN: 24, TR: 26,
+                AL: 28, BY: 28, CR: 22, EG: 29, GE: 22, IQ: 23, LC: 32, SC: 31, ST: 25,
+                SV: 28, TL: 23, UA: 29, VA: 22, VG: 24, XK: 20
+            };
+            var iban = String(input).toUpperCase().replace(/[^A-Z0-9]/g, ''), // keep only alphanumeric characters
+                code = iban.match(/^([A-Z]{2})(\d{2})([A-Z\d]+)$/), // match and capture (1) the country code, (2) the check digits, and (3) the rest
+                digits;
+            // check syntax and length
+            if (!code || iban.length !== CODE_LENGTHS[code[1]]) {
+                return false;
+            }
+            // rearrange country code and check digits, and convert chars to ints
+            digits = (code[3] + code[1] + code[2]).replace(/[A-Z]/g, function (letter) {
+                return letter.charCodeAt(0) - 55;
+            });
+            // final check
+            return mod97(digits) === 1;
+        }
+
+        function mod97(string) {
+            var checksum = string.slice(0, 2), fragment;
+            for (var offset = 2; offset < string.length; offset += 7) {
+                fragment = String(checksum) + string.substring(offset, offset + 7);
+                checksum = parseInt(fragment, 10) % 97;
+            }
+            return checksum;
+        }
+    </script>
+
+    <div class="form-group">
+        <label for="Belege">Anzahl Belege</label>
+        <select id="Belege"  aria-describedby="Belege-ANZ" oninput="updateBelege()">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+        </select>
+        <span id="Belege-ANZ" class="sr-only">Wähle die Anzahl an Belegen aus!</span>
+    </div>
+    <div class="form-group" id="Belege-Selectors">
+    </div>
+    <script>
+        function uploadTicket(indeks){
+            console.log(indeks);
+        }
+        function uploadZB(indeks){
+            console.log(indeks);
+        }
+        function generateHTML(index){
+            let curnum = 604+6*index;
+            index +=1;
+            return ('<div class="form-group">'+
+                '<label for="604/'+index+'">Rechnung '+(index)+' <span class="required" aria-hidden="true">*</span></label>'+
+                '<input type="date" id="'+curnum+'" class="field-divided" placeholder="Rechnungsdatum" aria-required="true">'+
+                '<input type="text" id="'+(curnum+1)+'"  class="field-divided" placeholder="Belegtext" aria-required="true">'+
+                '<input type="number" step=".01" min="0" id="'+(curnum+2)+'"  class="field-divided" placeholder="Betrag(EUR)" aria-required="true">'+
+                '<input type="text" id="'+(curnum+3)+'"  class="field-divided" placeholder="optional: Betrag (Fremdwährung)" aria-required="false">'+
+                '<span class = "validity"></span>'+
+                '<label for="'+(index+"/Ticket")+'">Auswahl Ticket<span class="required" aria-hidden="true">*</span></label>'+
+                '<input type="file" accept=".pdf,.jpeg,.jpg,.png" id="'+(index+"/Ticket")+'"  value="Upload Ticket" class="field-divided" aria-required="true" onclick="uploadTicket('+index+')">' +
+                '<label for="'+(index+"/ZB")+'">Auswahl Zahlungsbestätigung<span class="required" aria-hidden="true">*</span></label>'+
+                '<input type="file" accept=".pdf,.jpeg,.jpg,.png" id="'+(index+"/ZB")+'" value="Upload Zahlungsbestätigung" class="field-divided" aria-required="true" onclick="uploadZB('+index+')">'+
+                '</div>');
+        }
+        function updateBelege() {
+            var selector = document.getElementById("Belege");
+            var nbelege = selector.value;
+            var belege = document.getElementById("Belege-Selectors");
+            belege.innerHTML = "";
+            for (var i = 0; i < nbelege; i++) {
+                belege.innerHTML += generateHTML(i);
+            }
+        }
+    </script>
+    <!--<div class="form-group">
+        <label for="message">Your Message <span class="required" aria-hidden="true">*</span></label>
+        <textarea id="message" name="message" placeholder="Type your message here..." aria-required="true"></textarea>
+    </div>-->
+    <br>
+    <div class="form-group">
+        <input type="button" value="Ausgefülltes Formular herunterladen" aria-label="Download" onclick="downloadFinalForm()">
+    </div>
+    <script src ="pdf-lib.js">
+    </script>
+<script>
+    function saveByteArray(reportName, byte) {
+        const blob = new Blob([byte], {type: "application/pdf"});
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = reportName;
+        link.click();
+    }
+    function calcpagedims(toinsert, page) {
+        let ogwid = toinsert.width;
+        let ogheight = toinsert.height;
+        let curwid = page.getWidth();
+        let curheight = page.getHeight();
+        let a = ogwid / (curwid);
+        let b = ogheight / (curheight-20);
+        let scfactor = a>b?a:b;
+        const newpagedims = toinsert.scale(1/scfactor);
+        return newpagedims;
+    }
+
+    async function embedPicOrPdf(toEmbed, newdocument, newpage){
+        let newdoc = newdocument;
+        let page=newpage;
+        let ticket = toEmbed;
+        if(ticket.type === "application/pdf"){
+            let [embeddedTicket] = await newdoc.embedPdf(await ticket.arrayBuffer());
+            let newpagedims = calcpagedims(embeddedTicket, page);
+
+            page.drawPage(embeddedTicket, {
+                ...newpagedims,
+                x:0,
+                y:0,
+            });
+        }else if(ticket.type === "image/jpeg" || ticket.type === "image/jpg"){
+            let embedPic = await newdoc.embedJpg(await ticket.arrayBuffer());
+            let newpagedims = calcpagedims(embedPic, page);
+            page.drawImage(embedPic, {
+                ...newpagedims,
+                x:0,
+                y:0,
+            })
+
+        }else if(ticket.type === "image/png"){
+            let embedPic = await newdoc.embedPng(await ticket.arrayBuffer());
+            let newpagedims = calcpagedims(embedPic, page);
+            page.drawImage(embedPic, {
+                ...newpagedims,
+                x:0,
+                y:0,
+            })
+        }
+    }
+
+    async function downloadFinalForm() {
+
+        var formUrl = 'https://syncandshare.lrz.de/dl/fi3shG7WWYsd2rj15Gnfv9/refund.pdf?inline&skipCounter=true';
+        var formUrl = 'refund.pdf';
+        const formPdfBytes = await fetch(formUrl).then(res => res.arrayBuffer())
+        //const formPdfBytes = readFileSync(formUrl);
+        //const marioUrl = 'https://pdf-lib.js.org/assets/small_mario.png'
+        //const marioImageBytes = await fetch(marioUrl).then(res => res.arrayBuffer())
+
+        //const emblemUrl = 'https://pdf-lib.js.org/assets/mario_emblem.png'
+        //const emblemImageBytes = await fetch(emblemUrl).then(res => res.arrayBuffer())
+
+        const pdfDoc = await PDFLib.PDFDocument.load(formPdfBytes)
+
+        //const marioImage = await pdfDoc.embedPng(marioImageBytes)
+        //const emblemImage = await pdfDoc.embedPng(emblemImageBytes)
+
+        const form = pdfDoc.getForm()
+        var refs = {};
+        for(let i = 0; i< form.getFields().length; i++){
+            const x = form.getFields()[i]
+            refs[x.ref.objectNumber] = x;
+        }
+        console.log(refs[582])
+        var arr = form.getFields().map(item => {return item.ref.objectNumber});
+
+        for(let i = 0; i< arr.length; i++){
+            let currnum = arr[i];
+            let currobj = refs[currnum];
+            let elem_to_fill = document.getElementById(""+currnum);
+            if(elem_to_fill == null){
+                continue;
+            }
+            let value_to_fill = elem_to_fill.value;
+
+            if(currobj instanceof PDFLib.PDFTextField){
+                currobj.setText(value_to_fill);
+            } else if (currobj instanceof PDFLib.PDFCheckBox){
+                //currobj.check();
+            }
+            console.log(currobj);
+        }
+        let numofBelege = document.getElementById("Belege").value
+        //const newdoc = await PDFLib.PDFDocument.create();
+        const helvetica = await pdfDoc.embedFont(PDFLib.StandardFonts.Helvetica);
+
+        for(let i = 1; i <= numofBelege; i++) {
+            const ticket = await document.getElementById((i+"/Ticket")).files[0];
+            const zahlungsbeleg = await document.getElementById(i+("/ZB")).files[0];
+            //console.log(ticket);
+            //console.log(zahlungsbeleg);
+            const page = pdfDoc.addPage();
+            const {width, height} = page.getSize();
+            const fontSize = 20
+            await embedPicOrPdf(ticket, pdfDoc, page);
+            page.drawText("Ticket " + i+":", {
+                x: 10,
+                y: height-20,
+                size: fontSize,
+                font: helvetica,
+                color: PDFLib.rgb(1,0,0),
+            })
+            const page2 = pdfDoc.addPage();
+            await embedPicOrPdf(zahlungsbeleg, pdfDoc, page2);
+            page2.drawText("Zahlungsbeleg " + i+":", {
+                x: 10,
+                y: height-20,
+                size: fontSize,
+                font: helvetica,
+                color: PDFLib.rgb(1,0,0),
+            })
+        }
+        //const test = await newdoc.save();
+        //saveByteArray("Test.pdf", test);
+
+        //pdfDoc.embedPages()
+        var nachname = document.getElementById("591");
+        var titel = document.getElementById("582");
+        const pdfBytes = await pdfDoc.save();
+        saveByteArray("Refundierung_"+nachname.value.replaceAll(" ", "_")+"_"+titel.value.replaceAll(" ", "_")+".pdf", pdfBytes);
+    }
+</script>
+
+
+</form>
+
+</body>
+</html>
+
+<style type="text/css">
+    .form-style-1 {
+        margin:10px auto;
+        max-width: 1600px;
+        padding: 20px 12px 10px 20px;
+        font: 13px "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+    }
+    .form-style-1 li {
+        padding: 0;
+        display: block;
+        list-style: none;
+        margin: 10px 0 0 0;
+    }
+    .form-style-1 label{
+        margin:0 0 3px 0;
+        padding:0px;
+        display:block;
+        font-weight: bold;
+    }
+    .form-style-1 input[type=text],
+    .form-style-1 input[type=date],
+    .form-style-1 input[type=datetime],
+    .form-style-1 input[type=number],
+    .form-style-1 input[type=search],
+    .form-style-1 input[type=time],
+    .form-style-1 input[type=url],
+    .form-style-1 input[type=email],
+    textarea,
+    select{
+        box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        border:1px solid #BEBEBE;
+        padding: 7px;
+        margin:0px;
+        -webkit-transition: all 0.30s ease-in-out;
+        -moz-transition: all 0.30s ease-in-out;
+        -ms-transition: all 0.30s ease-in-out;
+        -o-transition: all 0.30s ease-in-out;
+        outline: none;
+    }
+    .form-style-1 input[type=text]:focus,
+    .form-style-1 input[type=date]:focus,
+    .form-style-1 input[type=datetime]:focus,
+    .form-style-1 input[type=number]:focus,
+    .form-style-1 input[type=search]:focus,
+    .form-style-1 input[type=time]:focus,
+    .form-style-1 input[type=url]:focus,
+    .form-style-1 input[type=email]:focus,
+    .form-style-1 textarea:focus,
+    .form-style-1 select:focus{
+        -moz-box-shadow: 0 0 8px #88D5E9;
+        -webkit-box-shadow: 0 0 8px #88D5E9;
+        box-shadow: 0 0 8px #88D5E9;
+        border: 1px solid #88D5E9;
+    }
+    .form-style-1 .field-divided{
+        width: 49%;
+    }
+
+    .form-style-1 .field-long{
+        width: 100%;
+    }
+    .form-style-1 .field-select{
+        width: 100%;
+    }
+    .form-style-1 .field-textarea{
+        height: 100px;
+    }
+    .form-style-1 input[type=submit], .form-style-1 input[type=button]{
+        background: #4B99AD;
+        padding: 8px 15px 8px 15px;
+        border: 1px;
+        color: #fff;
+    }
+    .form-style-1 input[type=submit]:hover, .form-style-1 input[type=button]:hover{
+        background: #4691A4;
+        box-shadow:none;
+        -moz-box-shadow:none;
+        -webkit-box-shadow:none;
+    }
+    .form-style-1 .required{
+        color:red;
+    }
+</style>
