@@ -307,6 +307,7 @@
     }
 
     async function downloadFinalForm() {
+        alert("PDF in Arbeit!");
         var formUrl = 'https://syncandshare.lrz.de/dl/fi3shG7WWYsd2rj15Gnfv9/refund.pdf?inline&skipCounter=true';
         var formUrl = 'refund.pdf';
         const formPdfBytes = await fetch(formUrl).then(res => res.arrayBuffer())
